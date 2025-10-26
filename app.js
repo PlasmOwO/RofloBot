@@ -59,24 +59,56 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
       });
     }
 
-
-    // "test" command
-    if (name === 'test2') {
-      // Send a message into the channel where command was triggered from
+    //
+    if (name == 'add'){
       return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          flags: InteractionResponseFlags.IS_COMPONENTS_V2,
-          components: [
+        type : InteractionResponseType.MODAL,
+        data : {
+          custom_id : 'add_rofl',
+          title : "Add a Rofl file",
+          components : [
             {
-              type: MessageComponentTypes.TEXT_DISPLAY,
-              // Fetches a random emoji to send from a helper function
-              content: 'test'
+              type : 18,
+              label : "Name / Date of the game",
+              component : {
+                type : 4,
+                custom_id : "game_date",
+                placeholder : "Format ddmmyyyy_gamenumberX - Exemple 26102025_2",
+                style : 1, //une seule ligne,
+                min_lenght : 10,
+                max_lenght : 11,
+                required : true,
+              }
+            },
+            {
+              type : 18,
+              label : "Name of the enemy team",
+              component : {
+                type : 4,
+                custom_id : "team_name",
+                placeholder : "Les gourmands",
+                style : 1, //une seule ligne,
+                min_lenght : 2,
+                max_lenght : 50,
+                required : true,
+              }
+            },
+            {
+              type : 18,
+              label : "Rofl file",
+              component : {
+                type : 19,
+                custom_id : "rofl_file_uploaded",
+                placeholder : "Les gourmands",
+                required : true,
+              }
             }
+
           ]
-        },
-      });
-    }
+          }
+        });
+      }
+    
 
     // "challenge" command
     if (name === 'challenge' && id) {
@@ -222,6 +254,21 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     }
     
     return;
+  }
+
+
+  if (type === InteractionType.MODAL_SUBMIT)
+  {
+    const customId = data.custom_id;
+    const metadata = {game_date : data.components[0].component.value, enemy_team : data.components[1].component.value};
+    const rofl_file = Object.values(data.resolved.attachments)[0].url
+    console.log('Handling for game :', metadata);
+    return res.send({
+      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+      data: {
+        content: `✅ Rofl received : ${JSON.stringify({"Metadata" : metadata, "File" : rofl_file})}`,
+      },
+    });
   }
 
   console.error('unknown interaction type', type);

@@ -26,12 +26,12 @@ const TEST_COMMAND = {
   contexts: [0, 1, 2],
 };
 
-const TEST2_COMMAND = {
-  name : 'test2',
-  description: "Basic command",
+const ADD_ROFL_COMMAND = {
+  name : 'add',
+  description : 'Add a rofl file to the database',
   type : 1,
-  integration_types: [0,1],
-  contexts : [0,1,2],
+  integration_types : [0,1],
+  contexts : [0],
 };
 
 // Command containing options
@@ -52,6 +52,6 @@ const CHALLENGE_COMMAND = {
   contexts: [0, 2],
 };
 
-const ALL_COMMANDS = [TEST_COMMAND, TEST2_COMMAND, CHALLENGE_COMMAND];
+const ALL_COMMANDS = [TEST_COMMAND,ADD_ROFL_COMMAND, CHALLENGE_COMMAND];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
