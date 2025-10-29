@@ -8,7 +8,7 @@ import {
   ButtonStyleTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { getRandomEmoji, DiscordRequest } from './utils.js';
+import { getRandomEmoji, DiscordRequest, parse_rofl, write_mongo_collection } from './utils.js';
 import { getShuffledOptions, getResult } from './game.js';
 
 // Create an express app
@@ -262,7 +262,10 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     const customId = data.custom_id;
     const metadata = {game_date : data.components[0].component.value, enemy_team : data.components[1].component.value};
     const rofl_file = Object.values(data.resolved.attachments)[0].url
-    console.log('Handling for game :', metadata);
+    const game_metadata_json = await parse_rofl(rofl_file,metadata.game_date);
+
+    await write_mongo_collection("lol_match_database","scrim_matches",game_metadata_json);
+    // récupérer le fichier, le lire, le parser dans la fonction de parsing que j'ai créé et l'envoie sur la BDD
     return res.send({
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
       data: {

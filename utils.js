@@ -1,4 +1,8 @@
 import 'dotenv/config';
+import { ROFLReader } from 'rofl-parser.js';
+import { MongoClient } from 'mongodb';
+
+
 
 export async function DiscordRequest(endpoint, options) {
   // append endpoint to root API URL
@@ -45,3 +49,86 @@ export function getRandomEmoji() {
 export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+
+export async function parse_rofl(url_file, filename)
+//Function for parsing rofl file into JSON 
+{
+  const file_content = await fetch(url_file);
+  const arrayBuffer = await file_content.arrayBuffer();    
+  const buffer = Buffer.from(arrayBuffer);    // <-- conversion ArrayBuffer -> Node Buffer
+  const reader = new ROFLReader(buffer);
+  const metadata = reader.getMetadata(); // données de la game
+
+  function findPatchInBuffer(buf) {
+    // lire d'abord une portion en début de fichier 
+    const head = buf.toString('latin1', 0, Math.min(buf.length, 16384));
+
+    const labeledRe = /(?:patch|version)[^\dVv]{0,8}([Vv]?\d{1,2}\.\d{1,2}(?:\.\d{1,2})?)/i;
+    const labeled = head.match(labeledRe);
+    if (labeled && labeled[1]) return labeled[1].toUpperCase();
+
+    // match général : accepte un leading V/v optionnel
+    const verRe = /\b([Vv]?\d{1,2}\.\d{1,2}(?:\.\d{1,2})?)\b/g;
+    let m;
+    while ((m = verRe.exec(head)) !== null) {
+      let v = m[1];
+      const normal = v.replace(/^[Vv]/, '');
+      const major = parseInt(normal.split('.')[0], 10);
+      if (!Number.isNaN(major) && major >= 4) return v.toUpperCase();
+    }
+  }
+
+
+  function updateJsonKeys(metadata, filename, patch) {
+    // Ajouter le nom du fichier et le patch dans les métadonnées
+    metadata.jsonFileName = filename;
+    if (patch) metadata.patchVersion = patch;
+    
+    // metadata.officialMatch = isOfficialMatch(filename);
+
+    // Changer le nom des clés
+    if (metadata.hasOwnProperty('gameLength')) {
+        metadata.gameDuration = metadata.gameLength;
+        delete metadata.gameLength;
+    }
+    if (metadata.hasOwnProperty('statsJson')) {
+        metadata.participants = metadata.statsJson;
+        delete metadata.statsJson;
+    }
+    const positions = ["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY"];
+    metadata.participants.forEach((participant, index) => {
+        participant.TRUE_POSITION = positions[index % 5];
+    });
+
+    return metadata;
+  }
+
+  const patch = findPatchInBuffer(buffer);
+  const updatedMetadata = updateJsonKeys(metadata, filename, patch);
+  // console.log(updatedMetadata)
+  return updatedMetadata
+}
+
+export async function write_mongo_collection(db_name,collection_name, data)
+//Fonction to write data inside mongoDB
+{
+  let mongoClient;
+
+  try {
+      mongoClient = new MongoClient(process.env.DB_URI);
+      await mongoClient.connect();
+
+      const db = mongoClient.db(db_name);
+      const collection = db.collection(collection_name);
+      await collection.insertOne(data);
+      await mongoClient.close();
+      console.log("✅ Data inserted into MongoDB collection successfully.");
+  } catch (error) {
+      console.error('Connection to MongoDB Atlas failed!', error);
+      process.exit();
+  }
+
+
+}
+
