@@ -262,7 +262,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     const customId = data.custom_id;
     const metadata = {game_date : data.components[0].component.value, enemy_team : data.components[1].component.value};
     const rofl_file = Object.values(data.resolved.attachments)[0].url
-    const game_metadata_json = await parse_rofl(rofl_file,metadata.game_date);
+    const game_metadata_json = await parse_rofl(rofl_file,metadata.game_date, metadata.enemy_team);
 
     await write_mongo_collection("lol_match_database","scrim_matches",game_metadata_json);
     // récupérer le fichier, le lire, le parser dans la fonction de parsing que j'ai créé et l'envoie sur la BDD
