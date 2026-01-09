@@ -13,8 +13,8 @@ import { getShuffledOptions, getResult } from './game.js';
 
 // Create an express app
 const app = express();
-// Get port, or default to 3000
-const PORT = process.env.PORT || 3000;
+
+const PORT = process.env.PORT || 8100;
 
 // Store for in-progress games. In production, you'd want to use a DB
 const activeGames = {};

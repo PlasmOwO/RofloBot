@@ -22,16 +22,16 @@ const TEST_COMMAND = {
   name: 'test',
   description: 'Basic command',
   type: 1,
-  integration_types: [0, 1],
-  contexts: [0, 1, 2],
+  integration_types: 0,
+  contexts: 0,
 };
 
 const ADD_ROFL_COMMAND = {
   name : 'add',
   description : 'Add a rofl file to the database',
   type : 1,
-  integration_types : [0,1],
-  contexts : [0],
+  integration_types : 0,
+  contexts : 0,
 };
 
 // Command containing options
