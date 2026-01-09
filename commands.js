@@ -23,7 +23,7 @@ const TEST_COMMAND = {
   description: 'Basic command',
   type: 1,
   integration_types: 0,
-  contexts: 0,
+  dm_permission: false,
 };
 
 const ADD_ROFL_COMMAND = {
@@ -31,7 +31,7 @@ const ADD_ROFL_COMMAND = {
   description : 'Add a rofl file to the database',
   type : 1,
   integration_types : 0,
-  contexts : 0,
+  dm_permission: false
 };
 
 // Command containing options
