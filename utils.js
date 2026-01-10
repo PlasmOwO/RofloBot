@@ -51,7 +51,7 @@ export function capitalize(str) {
 }
 
 
-export async function parse_rofl(url_file, filename, ennemyTeamName)
+export async function parse_rofl(url_file, filename, ennemyTeamName, gameType)
 //Function for parsing rofl file into JSON 
 {
   const file_content = await fetch(url_file);
@@ -80,10 +80,11 @@ export async function parse_rofl(url_file, filename, ennemyTeamName)
   }
 
 
-  function updateJsonKeys(metadata, filename, patch, ennemyTeamName) {
+  function updateJsonKeys(metadata, filename, patch, ennemyTeamName, gameType) {
     // Ajouter le nom du fichier et le patch dans les métadonnées
     metadata.jsonFileName = filename;
     metadata.ennemyTeamName = ennemyTeamName;
+    metadata.gameType = gameType;
     if (patch) metadata.patchVersion = patch;
     
     // metadata.officialMatch = isOfficialMatch(filename);
@@ -106,7 +107,7 @@ export async function parse_rofl(url_file, filename, ennemyTeamName)
   }
 
   const patch = findPatchInBuffer(buffer);
-  const updatedMetadata = updateJsonKeys(metadata, filename, patch, ennemyTeamName);
+  const updatedMetadata = updateJsonKeys(metadata, filename, patch, ennemyTeamName, gameType);
   // console.log(updatedMetadata)
   return updatedMetadata
 }
