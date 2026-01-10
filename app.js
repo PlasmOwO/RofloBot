@@ -256,11 +256,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
   if (type === InteractionType.MODAL_SUBMIT)
   {
     const customId = data.custom_id;
-    console.log("DEBUG", data)
-    console.log("DEBUG", data.components[2].component)
-    const metadata = {game_date : data.components[0].component.value, enemy_team : data.components[1].component.value, game_type : data.components[2].component.value};
-    console.log("DEBUG",metadata.game_type);
-    console.log("DEBUG",metadata)
+    const metadata = {game_date : data.components[0].component.value, enemy_team : data.components[1].component.value, game_type : data.components[2].component.values[0]};
     const rofl_file = Object.values(data.resolved.attachments)[0].url
     const game_metadata_json = await parse_rofl(rofl_file,metadata.game_date, metadata.enemy_team, metadata.game_type);
 
