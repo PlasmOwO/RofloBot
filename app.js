@@ -95,6 +95,45 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
             },
             {
               type : 18,
+              label : "Type of the game",
+              component : {
+                type : 3,
+                custom_id : "game_type",
+                placeholder : "Select one ...",
+                options : [
+                  {
+                    label : "Scrim",
+                    value : "scrim",
+                    description : "Classical scrim game",
+                    default : true,
+                  },
+                  {
+                    label : "Warmup",
+                    value : "warmup",
+                    description : "Warmup game before officials games",
+                  },
+                  {
+                    label : "Blitz",
+                    value : "blitz",
+                    description : "Short quick game (15min)"
+                  },
+                  {
+                    label : "Official",
+                    value : "official",
+                    description : "Official Nexus tour game or LAN related to nexus tour"
+                  },
+                  {
+                    label : "Other",
+                    value : "other",
+                    description : "When you don't know :]"
+                  }
+              ],
+                
+                required : true,
+              }
+            },
+            {
+              type : 18,
               label : "Rofl file",
               component : {
                 type : 19,
