@@ -265,7 +265,13 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     return res.send({
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
       data: {
-        content: `✅ Rofl received : ${JSON.stringify({"Metadata" : metadata, "File" : rofl_file})}`,
+          content:
+            "```txt\n" +
+            "✅Rofl received\n" +
+            `Date and game number : ${metadata.game_date}\n` +
+            `Enemy team : ${metadata.enemy_team}\n` +
+            "```\n" +
+            rofl_file,
       },
     });
   }
